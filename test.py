@@ -37,7 +37,7 @@ def budget():
 
 def predict(city,occupation,dependents,income,age,loan_repayment,insurance,rent):
     ## Model Loded Here
-    Groceries_model = pickle.load(open('Model/Groceries.pkl','rb'))
+    Groceries_model = pickle.load(open(r'Model\Groceries.pkl','rb'))
     Eating_out_model = pickle.load(open(r'Model\Eating_Out.pkl','rb'))
     Education_model = pickle.load(open(r'Model\education_liReg_model.pkl','rb'))
     Entertainment_model = pickle.load(open(r'Model\Entertainment.pkl','rb'))
