@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Donut Chart</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            background-color: #121212;
+            color: #ffffff;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            overflow: hidden;
+        }
+        #chart-container {
+            width: 90%;
+            max-width: 600px;
+        }
+    </style>
+</head>
+<body>
+    <div id="chart-container">
+        <canvas id="donutChart"></canvas>
+    </div>
+
+    <script>
+        // Backend-provided data dynamically rendered via template rendering
+        const result = {{ result | tojson }};
+
+        // Extract labels and values from result object
+        const labels = Object.keys(result);
+        const dataValues = Object.values(result);
+
+        // Calculate total and percentages
+        const total = dataValues.reduce((sum, value) => sum + value, 0);
+        const percentages = dataValues.map(value => ((value / total) * 100).toFixed(2));
+
+        // Chart.js configuration
+        const ctx = document.getElementById('donutChart').getContext('2d');
+        const donutChart = new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                labels: labels,
+                datasets: [{
+                    data: dataValues,
+                    backgroundColor: [
+                        '#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF', '#FF9F40', '#FFCD56', '#36A2FF'
+                    ],
+                    borderColor: '#000000',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        display: true,
+                        position: 'bottom',
+                        labels: {
+                            color: '#ffffff'
+                        }
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                const index = context.dataIndex;
+                                const percentage = percentages[index];
+                                return `${context.label}: ${context.raw} (${percentage}%)`;
+                            }
+                        }
+                    }
+                },
+                onClick: (event, elements) => {
+                    if (elements.length > 0) {
+                        const index = elements[0].index;
+                        const label = labels[index];
+                        const value = dataValues[index];
+                        const percentage = percentages[index];
+                        alert(`Category: ${label}\nValue: ${value}\nPercentage: ${percentage}%`);
+                    }
+                },
+                animation: {
+                    animateScale: true,
+                    animateRotate: true
+                }
+            }
+        });
+    </script>
+</body>
+</html>
